@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipping Operations Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <div class="logo-container">
+                <div class="logo-placeholder">LOGO</div>
+                <h1>Shipping Operations Dashboard</h1>
+            </div>
+        </div>
+        <div class="header-controls">
+            <select class="form-control date-range-selector" id="dateRange">
+                <option value="7">Last 7 Days</option>
+                <option value="30" selected>Last 30 Days</option>
+                <option value="90">Last 90 Days</option>
+            </select>
+            <select class="form-control store-selector" id="storeSelector">
+                <option value="all">All Stores</option>
+                <option value="store1">Store 1</option>
+                <option value="store2">Store 2</option>
+            </select>
+            <button class="btn btn--outline export-btn">Export Data</button>
+            <button class="btn btn--primary details-btn">View Details</button>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Layout -->
+    <div class="dashboard-container">
+        <!-- Left Sidebar - Filters -->
+        <aside class="filters-sidebar">
+            <div class="filters-header">
+                <h3>Filters</h3>
+                <button class="btn btn--sm btn--outline clear-filters" id="clearFilters">Clear All</button>
+            </div>
+            
+            <div class="filter-group">
+                <label class="form-label">Carrier</label>
+                <select class="form-control" id="carrierFilter">
+                    <option value="all">All Carriers</option>
+                    <option value="fedex">FedEx</option>
+                    <option value="usps">USPS</option>
+                    <option value="ups">UPS</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="form-label">Service Type</label>
+                <select class="form-control" id="serviceFilter">
+                    <option value="all">All Services</option>
+                    <option value="home-delivery">Home Delivery</option>
+                    <option value="fedex-2day">FedEx 2Day</option>
+                    <option value="fedex-ground">FedEx Ground</option>
+                    <option value="fedex-overnight">FedEx Overnight</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="form-label">Zone</label>
+                <select class="form-control" id="zoneFilter">
+                    <option value="all">All Zones</option>
+                    <option value="zone1">Zone 1</option>
+                    <option value="zone2">Zone 2</option>
+                    <option value="zone3">Zone 3</option>
+                    <option value="zone4">Zone 4</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="form-label">Date Range</label>
+                <input type="date" class="form-control" id="startDate">
+                <input type="date" class="form-control" id="endDate">
+            </div>
+        </aside>
+
+        <!-- Center Content Area -->
+        <main class="main-content">
+            <!-- KPI Cards Row -->
+            <section class="kpi-section">
+                <div class="kpi-cards-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-title">On-Time Ship Rate</span>
+                            <span class="trend-indicator trend-down">↓</span>
+                        </div>
+                        <div class="kpi-value">
+                            <span class="kpi-number metric-poor" id="onTimeShipRate">51.6%</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-title">On-Time Delivery Rate</span>
+                            <span class="trend-indicator trend-down">↓</span>
+                        </div>
+                        <div class="kpi-value">
+                            <span class="kpi-number metric-poor" id="onTimeDeliveryRate">66.5%</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Order Accuracy</span>
+                            <span class="trend-indicator trend-up">↑</span>
+                        </div>
+                        <div class="kpi-value">
+                            <span class="kpi-number metric-good" id="orderAccuracy">95.2%</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Average Transit Days</span>
+                            <span class="trend-indicator trend-neutral">→</span>
+                        </div>
+                        <div class="kpi-value">
+                            <span class="kpi-number metric-neutral" id="avgTransitDays">3.9</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Cost per Shipment</span>
+                            <span class="trend-indicator trend-up">↑</span>
+                        </div>
+                        <div class="kpi-value">
+                            <span class="kpi-number metric-neutral" id="costPerShipment">$56.05</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Cost per Pound</span>
+                            <span class="trend-indicator trend-up">↑</span>
+                        </div>
+                        <div class="kpi-value">
+                            <span class="kpi-number metric-neutral" id="costPerLb">$0.84</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Row -->
+            <section class="charts-section">
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>On-Time Delivery Trend</h3>
+                            <span class="chart-subtitle">Last 30 Days</span>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Cost per Shipment by Carrier</h3>
+                            <span class="chart-subtitle">Current Period</span>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="carrierChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tables Section -->
+            <section class="tables-section">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Service Performance Scorecard</h3>
+                        <button class="btn btn--sm btn--outline">Export Table</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="performance-table" id="servicePerformanceTable">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-sort="service">Service Type</th>
+                                    <th class="sortable" data-sort="volume">Volume</th>
+                                    <th class="sortable" data-sort="on_time_rate">On-Time Rate</th>
+                                    <th class="sortable" data-sort="avg_transit">Avg Transit</th>
+                                    <th class="sortable" data-sort="cost_per_shipment">Cost/Shipment</th>
+                                    <th class="sortable" data-sort="cost_per_lb">Cost/Lb</th>
+                                </tr>
+                            </thead>
+                            <tbody id="serviceTableBody">
+                                <!-- Table rows will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Right Alerts Panel -->
+        <aside class="alerts-panel">
+            <div class="alerts-header">
+                <h3>Live Alerts</h3>
+                <button class="refresh-btn" id="refreshAlerts">🔄</button>
+            </div>
+            
+            <div class="alerts-container" id="alertsContainer">
+                <!-- Alert cards will be populated by JavaScript -->
+            </div>
+        </aside>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
